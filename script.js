@@ -3,7 +3,8 @@ new Vue({
     data: {
         playerHealth: 0,
         monsterHealth: 0,
-        gameIsRunning: false
+        gameIsRunning: false,
+        turns: []
     },
     methods: {
         startGame: function () {
@@ -12,16 +13,11 @@ new Vue({
             this.playerHealth = 100;
         },
         attack: function () {
-            var player_min = 3
-            var player_max = 10
-
-            this.monsterHealth -= this.calculateDamage(player_min, player_max);
-
+            this.playerAttacks();
+            this.monsterAttacks();
             if (this.checkWin()) {
                 return;
             }
-            this.monsterAttacks();
-            this.checkWin();
         },
 
         specialAttack: function () {
@@ -33,21 +29,34 @@ new Vue({
         },
 
         heal: function () {
-
+            if (this.playerHealth <= 90) {
+                this.playerHealth += 10
+            } else {
+                this.playerHealth = 100
+            }
         },
 
         giveUp: function () {
-
+            this.gameIsRunning = false
+            this.monsterHealth = 0;
+            this.playerHealth = 0;
         },
         calculateDamage: function (min, max) {
             return Math.max(Math.floor(Math.random() * max) + 1, min)
         },
 
         monsterAttacks: function () {
-            monster_min = 5
-            monster_max = 12
+            monster_min = 8
+            monster_max = 15
 
             this.playerHealth -= this.calculateDamage(monster_min, monster_max);
+        },
+
+        playerAttacks: function () {
+            var player_min = 3
+            var player_max = 10
+
+            this.monsterHealth -= this.calculateDamage(player_min, player_max);
         },
 
         checkWin: function () {
@@ -56,7 +65,8 @@ new Vue({
                 if (conf) {
                     this.startGame()
                 } else {
-                    this.gameIsRunning = false
+                    this.gameIsRunning = false;
+                    this.monsterHealth = 0;
                 }
                 return true
             } else if (this.playerHealth <= 0) {
@@ -65,6 +75,7 @@ new Vue({
                     this.startGame()
                 } else {
                     this.gameIsRunning = false
+                    this.playerHealth = 0;
                 }
                 return true
             }
